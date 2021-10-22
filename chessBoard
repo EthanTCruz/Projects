@@ -1,9 +1,8 @@
-
 package boardFunctions;
 import java.util.Scanner;  
 public class Play {
 
-	static int turn = 1;
+	static boolean valid = true;
 	
 	static char opp = 'B';
 	static char curr = 'W';
@@ -346,12 +345,15 @@ public class Play {
 		if(kingCheck()==false) {
 			moveLog(x1, y1);
 			moveLog(x2, y2);
+			changeTurn();
 		} else {
 			board[y1][x1] = board[y2][x2];
 			board[y2][x2] = temp;
+			valid = false;
 			System.out.println("invalid move");
 		}
 		} else {
+			valid = false;
 			System.out.println("invalid move");
 		}
 
@@ -439,8 +441,6 @@ public class Play {
 			for (int i = 0; i < board[j].length; i++) {
 
 				if (board[j][i].charAt(1) == team) {
-					System.out.println(
-							board[j][i] + "[" + displayMoves(showMoves(i, j)) + "]" + " " + showMoves(i, j).length);
 					moves = addArr(moves, showMoves(i, j));
 
 				}
@@ -482,6 +482,7 @@ public class Play {
 			curr = 'W';
 			opp = 'B';
 		}
+		valid = true;
 	}
 	
 	public static boolean gameOver() {
@@ -501,11 +502,22 @@ public class Play {
 	public static void startGame() {
 	while (gameOver()==false) {
 	    Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-	    System.out.println("moves");
-
+	    System.out.println("Please input moves in folling format of \"x1,y1,x2,y2\"");
+	    
 	    String move = myObj.nextLine();  
+	    String[] tokens = move.split(",");
+	    int x1 = Integer.parseInt(tokens[0]); 
+	    int y1 = Integer.parseInt(tokens[1]); 
+	    int x2 = Integer.parseInt(tokens[2]); 
+	    int y2 = Integer.parseInt(tokens[3]); 
+	    move(x1,y1,x2,y2);
+	    //form at answer "()"
 	    //parse move into integers for move()
+	    if (valid==true) {
 	    showBoard();
+	    } else {
+	    	System.out.println("invalid move");
+	    }
 	}
 	}
 
@@ -513,17 +525,6 @@ public class Play {
 
 	public static void main(String[] args) {
 
-		showBoard();
-
-			System.out.println(board[1][5]);
-	
-			System.out.print("[ ");
-			for (int element : kingFind('W')) {
-				System.out.print(element + " ");
-			}
-			System.out.println("]");
-			System.out.println(kingCheck());
-
-		showBoard();
+		startGame();
 	}
 }
