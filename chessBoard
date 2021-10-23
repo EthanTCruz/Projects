@@ -15,7 +15,7 @@ public class Play {
 			{ "5 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 			{ "6 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 			{ "7 ", "PB", "PB", "PB", "PB", "PB", "PB", "PB", "PB", "  " },
-			{ "8 ", "RB", "NB", "BB", "KB", "QB", "BB", "NB", "RB", "  " },
+			{ "8 ", "RB", "NB", "BB", "QB", "KB", "BB", "NB", "RB", "  " },
 			{ "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 
 	};
@@ -25,6 +25,7 @@ public class Play {
 	static int[] log = new int[0];
 
 	public static void showBoard() {
+		System.out.println("Current player is: " + curr);
 		// Loop through all rows
 		for (int i = board.length - 1; i >= 0; i--) {
 
@@ -223,6 +224,8 @@ public class Play {
 
 	}
 
+	
+	
 	// recursive functions for diagonal movements
 	public static void diagonal(int x, int y) {
 		diagonalUR(x, y);
@@ -274,8 +277,9 @@ public class Play {
 			}
 		}
 	}
-
+	
 	// recursive functions for straight movements
+	
 	public static void straight(int x, int y) {
 		straightRecFw(x, y);
 		straightRecBw(x, y);
@@ -335,6 +339,9 @@ public class Play {
 
 	}
 
+	
+
+	
 	public static void move(int x1, int y1, int x2, int y2) {
 
 		if (check(x1, y1, x2, y2) == true) {
@@ -464,7 +471,7 @@ public class Play {
 		int[] all = allPosMoves(opp);
 		int i = all.length;
 		boolean checked = false;
-		int[] loc = kingFind(opp);
+		int[] loc = kingFind(curr);
 		for (int v = 0; v < i; v = v + 2) {
 			if ((all[v] == loc[1]) && (all[v + 1] == loc[0])) {
 				checked = true;
@@ -510,6 +517,7 @@ public class Play {
 	    int y1 = Integer.parseInt(tokens[1]); 
 	    int x2 = Integer.parseInt(tokens[2]); 
 	    int y2 = Integer.parseInt(tokens[3]); 
+	    System.out.println("moves inputted: "+"moves("+x1+y1+x2+y2+")");
 	    move(x1,y1,x2,y2);
 	    //form at answer "()"
 	    //parse move into integers for move()
@@ -518,13 +526,19 @@ public class Play {
 	    } else {
 	    	System.out.println("invalid move");
 	    }
+	    myObj.close();
 	}
 	}
 
 
 
 	public static void main(String[] args) {
+		showBoard();
+		move(1,2,1,3);
+		showBoard();
+		move(1,7,1,6);
+		showBoard();
 
-		startGame();
+		//startGame();
 	}
 }
