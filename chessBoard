@@ -5,12 +5,20 @@ public class Play {
 
 	static boolean valid = true;
 	
+	
+	static int currPieceX;
+	static int currPieceY;
+	
 	static char opp = 'B';
 	static char curr = 'W';
+	
+	static int[] currMoves = new int[0];
+	
+	
 
-	static String[][] board = new String[][] { { "  ", "a ", "b ", "c ", "d ", "e ", "f ", "g ", "h ", "  " },
+	static String[][] board = new String[][] { { "  ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "  " },
 			{ "1 ", "RW", "NW", "BW", "QW", "KW", "BW", "NW", "RW", "  " },
-			{ "2 ", "PW", "PW", "PW", "PW", "QW", "PW", "PW", "PW", "  " },
+			{ "2 ", "PW", "PW", "PW", "PW", "PW", "PW", "PW", "PW", "  " },
 			{ "3 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 			{ "4 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 			{ "5 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
@@ -46,20 +54,36 @@ public class Play {
 	}
 
 	// change add move to show places on board
-	public static void addMove(int x1, int y1) {
-		int[] temp = new int[checkMove.length + 2];
-		int i = checkMove.length + 2;
-		for (int n = 0; n < i - 2;) {
-			temp[n] = checkMove[n];
-			n++;
-		}
-		checkMove = temp;
-		checkMove[i - 2] = x1;
-		checkMove[i - 1] = y1;
+	private static void addMove(int x1, int y1) {
+		
+	
 
+		 if (!kingCheck()) {
+				int[] temp = new int[] {x1,y1};
+				checkMove = addArr(checkMove, temp);
+
+
+				} else
+		if (kingCheck()) {
+		String Piece = board[currPieceY][currPieceX];
+		board[currPieceY][currPieceX] = board[y1][x1];
+		board[y1][x1] = Piece;
+		if(!kingCheck()) {
+			int[] temp = new int[] {x1,y1};
+			checkMove = addArr(checkMove, temp);
+
+		}
+
+		board[y1][x1] = board[currPieceY][currPieceX];
+		board[currPieceY][currPieceX] = Piece;
+		}
+
+
+		 
 	}
 
 	public static boolean check(int x1, int y1, int x2, int y2) {
+		
 
 		int i = showMoves(x1, y1).length;
 		boolean check = false;
@@ -86,7 +110,11 @@ public class Play {
 	public static int[] showMoves(int x1, int y1) {
 		char Piece = board[y1][x1].charAt(0);
 		char side = board[y1][x1].charAt(1);
+		currPieceX = x1;
+		currPieceY = y1;
+		
 		checkMove = new int[0];
+
 
 		// coding for W
 		if (side == curr) {
@@ -231,6 +259,7 @@ public class Play {
 		}
 
 		return checkMove;
+		
 
 	}
 
@@ -491,6 +520,7 @@ public class Play {
 			for (int i = 0; i < board[j].length; i++) {
 
 				if (board[j][i].charAt(1) == team) {
+
 					moves = addArr(moves, showMoves(i, j));
 
 				}
@@ -504,6 +534,7 @@ public class Play {
 
 
 	public static boolean kingCheck() {
+		currMoves = Arrays.copyOf(checkMove, checkMove.length);
 		int[] all = allPosMoves(opp);
 		int i = all.length;
 		boolean checked = false;
@@ -513,6 +544,7 @@ public class Play {
 				checked = true;
 			}
 		}
+		checkMove = Arrays.copyOf(currMoves, currMoves.length);
 		return checked;
 	}
 	
@@ -520,6 +552,7 @@ public class Play {
 	public static void changeTurn() {
 		if (curr == 'W') {
 			curr = 'B';
+			
 			opp = 'W';
 		} else {
 			curr = 'W';
@@ -571,13 +604,15 @@ public class Play {
 
 
 	public static void main(String[] args) {
+//		showBoard();
+//		int [] moves = allPosMoves(curr);
+//		System.out.println(Arrays.toString(moves) + moves.length);
+//		int [] QW = showMoves(5,2);
+//		System.out.println(Arrays.toString(QW) + QW.length);
+//		dispMoves(QW);
+//		move(5,2,6,3);
 		showBoard();
-		int [] QW = showMoves(5,2);
-		System.out.println(Arrays.toString(QW) + QW.length);
-		dispMoves(QW);
-		move(5,2,6,3);
-		showBoard();
-		dispMoves(QW);
+//		dispMoves(QW);
 		
 //		showBoard();
 //		move(4,1,8,5);
@@ -590,6 +625,6 @@ public class Play {
 //		move(1,7,1,8);
 //		showBoard();
 
-//		startGame();
+		startGame();
 	}
 }
