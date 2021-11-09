@@ -1,7 +1,12 @@
 package boardFunctions;
-import java.util.Arrays;
-import java.util.Scanner;  
+import java.util.*;
 public class Play {
+
+	public class showBoard {
+
+	}
+
+
 
 	static boolean valid = true;
 	
@@ -10,7 +15,7 @@ public class Play {
 	static int currPieceY;
 	
 	static char opp = 'B';
-	static char curr = 'W';
+	private static char curr = 'W';
 	
 	static int[] currMoves = new int[0];
 	
@@ -34,7 +39,8 @@ public class Play {
 	static int[] log = new int[0];
 
 	public static void showBoard() {
-		System.out.println("           Current player is: " + curr);
+		
+		System.out.println("           Current player is: " + getCurr());
 		// Loop through all rows
 		System.out.print("   __________________________________");
 		System.out.println();
@@ -51,6 +57,11 @@ public class Play {
 
 		System.out.println("  |__________________________________|");
 		System.out.println();
+			
+		if(kingFind(getCurr())[0] == 0) {
+			System.out.print(opp + " wins!!!");
+		}
+		
 	}
 
 	// change add move to show places on board
@@ -117,10 +128,10 @@ public class Play {
 
 
 		// coding for W
-		if (side == curr) {
+		if (side == getCurr()) {
 		if (Piece == 'P') {
 
-			if (curr=='W') {
+			if (getCurr()=='W') {
 
 				if ((board[y1][0] == board[2][0]) && (board[y1 + 1][x1] == "  ")) {
 					addMove(x1, y1 + 1);
@@ -418,7 +429,7 @@ public class Play {
 			v = v + 2;
 		}
 
-		System.out.println("           Current player is: " + curr);
+		System.out.println("           Current player is: " + getCurr());
 		// Loop through all rows
 		System.out.print("   __________________________________");
 		System.out.println();
@@ -539,7 +550,7 @@ public class Play {
 		int[] all = allPosMoves(opp);
 		int i = all.length;
 		boolean checked = false;
-		int[] loc = kingFind(curr);
+		int[] loc = kingFind(getCurr());
 		for (int v = 0; v < i; v = v + 2) {
 			if ((all[v] == loc[1]) && (all[v + 1] == loc[0])) {
 				checked = true;
@@ -551,12 +562,12 @@ public class Play {
 	
 
 	public static void changeTurn() {
-		if (curr == 'W') {
-			curr = 'B';
+		if (getCurr() == 'W') {
+			setCurr('B');
 			
 			opp = 'W';
 		} else {
-			curr = 'W';
+			setCurr('W');
 			opp = 'B';
 		}
 		valid = true;
@@ -565,7 +576,7 @@ public class Play {
 	public static boolean gameOver() {
 		boolean status = false;
 		changeTurn();
-			if(kingFind(curr).length==0) {
+			if(kingFind(getCurr())[0] == 0) {
 				status = true;
 				System.out.print(opp + " wins!!!");
 			}
@@ -577,11 +588,12 @@ public class Play {
 	
 	public static void startGame() {
 		showBoard();
+	    Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+
+
 	while (gameOver()==false) {
 
-	    Scanner myObj = new Scanner(System.in);  // Create a Scanner object
 	    System.out.println("Please input moves in folling format of \"x1,y1,x2,y2\"");
-	    
 	    String move = myObj.nextLine();  
 	    String[] tokens = move.split(",");
 	    int x1 = Integer.parseInt(tokens[0]); 
@@ -598,30 +610,41 @@ public class Play {
 	    	System.out.println("invalid move");
 	    }
 
+	} 
+
+		System.out.print(opp + " wins!!!");
+	
+	myObj.close();
 	}
 
+	public static char getCurr() {
+		return curr;
 	}
 
+	public static void setCurr(char team) {
+		curr = team;
+	}
 
 
 	public static void main(String[] args) {
-//		showBoard();
-//		int [] moves = allPosMoves(curr);
-//		System.out.println(Arrays.toString(moves) + moves.length);
-//		int [] QW = showMoves(5,2);
-//		System.out.println(Arrays.toString(QW) + QW.length);
-//		dispMoves(QW);
-//		move(5,2,6,3);
-//		showBoard();
-//		dispMoves(QW);
+
 		
 		showBoard();
 		move(5,2,5,7);
 		showBoard();
+		System.out.println(kingCheck());
 		move(1,7,1,5);
 
 		showBoard();
+		move(5,7,5,8);
+		showBoard();
 
-		startGame();
+//		startGame();
 	}
+
+
+
+
+
+
 }
