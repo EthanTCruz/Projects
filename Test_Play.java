@@ -1,38 +1,33 @@
 package testStack;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
+import org.junit.Test;
 import boardFunctions.Play;
 
 public class Test_Play {
 
 
-
-
-
 	@Test
 	public void testMate() {
+		
 		Play.showBoard();
 		Play.move(5,2,5,7);
 		Play.showBoard();
 		System.out.println(Play.kingCheck());
 		Play.move(1,7,1,5);
-
 		Play.showBoard();
+		System.out.println(Arrays.toString(Play.getLog()) + Play.gameOver());
 		Play.move(5,7,5,8);
+		System.out.println(Arrays.toString(Play.getLog()) + Play.gameOver());
 		Play.showBoard();
-
+		
 	}
 	
 	@Test
 	public void testGame() {
-		Play.startGame();
+	//	Play.startGame();
 	}
 	
 	@Test
@@ -47,6 +42,26 @@ public class Test_Play {
 		Play.move(5,2,6,3);
 		Play.showBoard();
 		Play.dispMoves(QW);
+	}
+	
+	@Test
+	public void PTest() {
+	Play.showBoard();
+	Play.move(8,2,8,4);
+	Play.showBoard();
+	Play.move(5,7,5,2);
+	Play.showBoard();
+	Play.move(8,4,8,5);
+	Play.showBoard();
+	
+	}
+	
+	@Test
+	public void resetTest() {
+		Play.showBoard();
+		Play.resetBoard();
+		Play.showBoard();
+		
 	}
 
 

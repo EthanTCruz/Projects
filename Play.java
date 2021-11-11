@@ -1,44 +1,89 @@
 package boardFunctions;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 public class Play {
 
-	public class showBoard {
 
-	}
 
 
 
 	static boolean valid = true;
 	
+
 	
 	static int currPieceX;
 	static int currPieceY;
 	
 	static char opp = 'B';
-	private static char curr = 'W';
+	static char curr = 'W';
 	
 	static int[] currMoves = new int[0];
 	
+
+
 	
 
-	static String[][] board = new String[][] { { "  ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "  " },
+	public static String[][] board = new String[][] { { "  ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "  " },
 			{ "1 ", "RW", "NW", "BW", "QW", "KW", "BW", "NW", "RW", "  " },
 			{ "2 ", "PW", "PW", "PW", "PW", "QW", "PW", "PW", "PW", "  " },
 			{ "3 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 			{ "4 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 			{ "5 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 			{ "6 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
-			{ "7 ", "PB", "PB", "PB", "PB", "PB", "PB", "PB", "PB", "  " },
+			{ "7 ", "PB", "PB", "PB", "PB", "QB", "PB", "PB", "PB", "  " },
 			{ "8 ", "RB", "NB", "BB", "QB", "KB", "BB", "NB", "RB", "  " },
 			{ "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
 
 	};
+	
+	static String[][] defBoard = new String[][] { { "  ", "1 ", "2 ", "3 ", "4 ", "5 ", "6 ", "7 ", "8 ", "  " },
+		{ "1 ", "RW", "NW", "BW", "QW", "KW", "BW", "NW", "RW", "  " },
+		{ "2 ", "PW", "PW", "PW", "PW", "PW", "PW", "PW", "PW", "  " },
+		{ "3 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+		{ "4 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+		{ "5 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+		{ "6 ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+		{ "7 ", "PB", "PB", "PB", "PB", "PB", "PB", "PB", "PB", "  " },
+		{ "8 ", "RB", "NB", "BB", "QB", "KB", "BB", "NB", "RB", "  " },
+		{ "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  " },
+
+};
 
 	static int[] checkMove = new int[0];
 
-	static int[] log = new int[0];
+	private static int[] log = new int[0];
+	
+	
+	//Look at me and moveRecursions file
+	public static String[][] getBoard() {
+		return board;
+	}
 
+
+
+	public static void resetBoard() {
+		board = new String[defBoard.length][];
+		for(int i = 0; i < defBoard.length; i++)
+		    board[i] = defBoard[i].clone();
+		 
+		currPieceX = -1;
+		 currPieceY = -1;
+		
+		 opp = 'B';
+		curr = 'W';
+		
+		currMoves = new int[0];
+		log = new int[0];
+		valid = true;
+		
+		
+	}
+	
 	public static void showBoard() {
+	
+		
 		
 		System.out.println("           Current player is: " + getCurr());
 		// Loop through all rows
@@ -61,6 +106,7 @@ public class Play {
 		if(kingFind(getCurr())[0] == 0) {
 			System.out.print(opp + " wins!!!");
 		}
+	
 		
 	}
 
@@ -133,12 +179,15 @@ public class Play {
 
 			if (getCurr()=='W') {
 
-				if ((board[y1][0] == board[2][0]) && (board[y1 + 1][x1] == "  ")) {
+				if ((board[y1][0] == defBoard[2][0]) && (board[y1 + 1][x1] == "  ")) {
 					addMove(x1, y1 + 1);
 					if ((board[y1][0] == board[2][0]) && (board[y1 + 2][x1] == "  ")) {
 						addMove(x1, y1 + 2);
 
 					}
+				}
+				if (board[y1 + 1][x1] == "  ") {
+					addMove(x1, y1 + 1);
 				}
 				if (board[y1 + 1][x1 + 1].charAt(1) == opp) {
 					addMove(x1 + 1, y1 + 1);
@@ -147,12 +196,15 @@ public class Play {
 					addMove(x1 - 1, y1 + 1);
 				}
 			} else {
-				if ((board[y1][0] == board[7][0]) && (board[y1 - 1][x1] == "  ")) {
+				if ((board[y1][0] == defBoard[7][0]) && (board[y1 - 1][x1] == "  ")) {
 					addMove(x1, y1 - 1);
-					if ((board[y1][0] == board[7][0]) && (board[y1 - 2][x1] == "  ")) {
+					if ((board[y1][0] == defBoard[7][0]) && (board[y1 - 2][x1] == "  ")) {
 						addMove(x1, y1 - 2);
 
 					}
+				}
+				if (board[y1 - 1][x1] == "  ") {
+					addMove(x1, y1 - 1);
 				}
 				if (board[y1 - 1][x1 + 1].charAt(1) == opp) {
 					addMove(x1 + 1, y1 - 1);
@@ -274,9 +326,6 @@ public class Play {
 
 	}
 
-	
-	
-	// recursive functions for diagonal movements
 	public static void diagonal(int x, int y) {
 		diagonalUR(x, y);
 		diagonalUL(x, y);
@@ -284,7 +333,7 @@ public class Play {
 		diagonalDL(x, y);
 	}
 
-	private static void diagonalDL(int x, int y) {
+	public static void diagonalDL(int x, int y) {
 		if ((y > 1) && (x > 1)) {
 			if (board[y - 1][x - 1] == "  ") {
 				addMove(x-1, y - 1);
@@ -295,7 +344,7 @@ public class Play {
 		}
 	}
 
-	private static void diagonalDR(int x, int y) {
+	public static void diagonalDR(int x, int y) {
 		if ((y > 1) && (x < 8)) {
 			if (board[y - 1][x + 1] == "  ") {
 				addMove(x + 1, y - 1);
@@ -306,7 +355,7 @@ public class Play {
 		}
 	}
 
-	private static void diagonalUL(int x, int y) {
+	public static void diagonalUL(int x, int y) {
 		if ((y < 8) && (x > 1)) {
 			if (board[y + 1][x - 1] == "  ") {
 				addMove(x - 1, y + 1);
@@ -317,7 +366,7 @@ public class Play {
 		}
 	}
 
-	private static void diagonalUR(int x, int y) {
+	public static void diagonalUR(int x, int y) {
 		if ((y < 8) && (x < 8)) {
 			if (board[y + 1][x + 1] == "  ") {
 				addMove(x + 1, y + 1);
@@ -388,6 +437,8 @@ public class Play {
 		}
 
 	}
+	
+
 
 	
 
@@ -399,21 +450,26 @@ public class Play {
 			 temp = board[y2][x2];
 			board[y2][x2] = board[y1][x1];
 			board[y1][x1] = "  ";
+			
 
 		if(kingCheck()==false) {
 			moveLog(x1, y1);
 			moveLog(x2, y2);
 			changeTurn();
+			if(kingFind(curr)[0] == 0) {
+				System.out.print(opp + " wins!!!");
+			}
 		} else {
 			board[y1][x1] = board[y2][x2];
 			board[y2][x2] = temp;
 			valid = false;
-			System.out.println("invalid move");
+			System.out.println("invalid move: " + x1+y1+x2+y2 );
 		}
 		} else {
 			valid = false;
-			System.out.println("invalid move");
+			System.out.println("invalid move: " + x1+y1+x2+y2 );
 		}
+		noteBoard();
 
 	}
 	
@@ -455,17 +511,17 @@ public class Play {
 	}
 
 	public static int[] moveLog(int x, int y) {
-		int[] temp = new int[log.length + 2];
-		int i = log.length + 2;
+		int[] temp = new int[getLog().length + 2];
+		int i = getLog().length + 2;
 
 		for (int n = 0; n < i - 2;) {
-			temp[n] = log[n];
+			temp[n] = getLog()[n];
 			n++;
 		}
-		log = temp;
-		log[i - 2] = x;
-		log[i - 1] = y;
-		return log;
+		setLog(temp);
+		getLog()[i - 2] = x;
+		getLog()[i - 1] = y;
+		return getLog();
 	}
 
 	public static void enlarge(int[] currArray, int x, int y) {
@@ -596,6 +652,7 @@ public class Play {
 	    System.out.println("Please input moves in folling format of \"x1,y1,x2,y2\"");
 	    String move = myObj.nextLine();  
 	    String[] tokens = move.split(",");
+
 	    int x1 = Integer.parseInt(tokens[0]); 
 	    int y1 = Integer.parseInt(tokens[1]); 
 	    int x2 = Integer.parseInt(tokens[2]); 
@@ -625,23 +682,64 @@ public class Play {
 		curr = team;
 	}
 
-
-	public static void main(String[] args) {
-
-		
-		showBoard();
-		move(5,2,5,7);
-		showBoard();
-		System.out.println(kingCheck());
-		move(1,7,1,5);
-
-		showBoard();
-		move(5,7,5,8);
-		showBoard();
-
-//		startGame();
+	public static int[] getLog() {
+		return log;
 	}
 
+	public static void setLog(int[] log) {
+		Play.log = log;
+	}
+	
+	public static String writeBoard() {
+		String tempBoard = new String();
+		
+		tempBoard = Arrays.deepToString(defBoard);
+		
+		return tempBoard;
+	}
+	
+	public static void noteBoard() {
+		try {
+		      File myObj = new File("Rboard.txt");
+		      if (myObj.createNewFile()) {
+		        System.out.println("File created: " + myObj.getName());
+		      } else {
+
+		      }
+		    } catch (IOException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		    }
+		try {
+		      FileWriter myWriter = new FileWriter("filename.txt");
+		      myWriter.write(writeBoard());
+		      myWriter.close();
+		    } catch (IOException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		    }
+	}
+	
+	public static void main(String[] args) {
+		resetBoard();
+		move(1,2,1,3);
+		changeTurn();
+		move(1,3,1,4);
+		showBoard();
+		System.out.println(Arrays.toString(log));
+
+
+//		noteBoard();
+		startGame();
+
+
+
+
+	}
+
+
+
+	
 
 
 
