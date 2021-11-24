@@ -1,4 +1,4 @@
-
+rm(list=ls())
 
 
 
@@ -7,7 +7,7 @@
 assembleBoard<<-function(){
   #commented out code is for scaling board to different sizes
   #  depth <<- as.integer(readline(prompt = "Please enter grid square length: ") ) 
-  rm(list=ls())
+
   depth<<-3
   dSq <<- depth^2
   board<<-array(dim = c(depth,depth))
@@ -15,6 +15,10 @@ assembleBoard<<-function(){
   #TRUE = x, FALSE = o
   turn<<-"x"
   gameOver<<-F
+  URDLconn<<-0
+  DRULconn<<-0
+  LRconn<<-0
+  UDconn<<-0
   
   board[is.na(board)] <- " "
   board <<- board
@@ -50,7 +54,7 @@ move<<-function(x,y){
 }
 
 #input is last played move
-WL<<-function(x,y){
+WL<-function(x,y){
 
   x<-x
   y<-y
@@ -102,13 +106,12 @@ WL<<-function(x,y){
     
     URDLconn <<- diagUR(x,y) + diagDL(x,y)
    DRULconn<<- diagDR(x,y) + diagUL(x,y)
+   retVal<-0
     if((URDLconn>1)||(DRULconn>1)) {
 
-      return(2)
-    } else {
-
-      return(0)
-    }
+      retval<-2
+    } 
+   return(retVal)
   }
   
   lat<-function(x,y) {
@@ -210,30 +213,23 @@ move(1,1)
 
 
 }
-changeT()
-diagUR<-function(x,y){
-  if((x<depth)&&(y<depth)){
-    if(board[y+1,x+1]==turn){
-      print("sdfvd")
-      return(1+diagUR(x+1,y+1))
-    } else {
-      return(0)
-    }} else {
-      return(0)
-    } }
+
+
+assembleBoard()
 
 move(2,2)
 move(2,3)
 move(3,3)
-board
+
+
 move(2,1)
 
 move(1,1)
 board
-diagUR(1,1)
+
 diag(1,1)
 
-testL()
+
 
 
 
