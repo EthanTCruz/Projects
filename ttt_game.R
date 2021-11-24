@@ -1,4 +1,4 @@
-rm(list=ls())
+
 
 
 
@@ -7,22 +7,22 @@ rm(list=ls())
 assembleBoard<<-function(){
   #commented out code is for scaling board to different sizes
   #  depth <<- as.integer(readline(prompt = "Please enter grid square length: ") ) 
+  rm(list=ls())
   depth<<-3
   dSq <<- depth^2
   board<<-array(dim = c(depth,depth))
-  board
+
   #TRUE = x, FALSE = o
   turn<<-"x"
   gameOver<<-F
-  board <<- data.frame(board)
-  exists("board")
-  board[is.na("board")] <<- " "
   
+  board[is.na(board)] <- " "
+  board <<- board
   
   
 }
 
-changeT<-function(){
+changeT<<-function(){
   if (turn == "x"){
     turn <<- 'o'
   } else {
@@ -30,17 +30,20 @@ changeT<-function(){
   }
 }
 
-x = NA
-is.na(x)
 
 
-move<-function(x,y){
+
+move<<-function(x,y){
   #change to while function with prompt once win condition is established
   if (gameOver == F) {
     
-    if (is.na(board[x,y])){
+    if (board[x,y]==" "){
       board[x,y] <<- turn
+      if(WL(x,y)==1) {
+        paste(turn," Wins")
+      } else {
       changeT()
+      }
     }
   }
   
@@ -48,17 +51,17 @@ move<-function(x,y){
 
 #input is last played move
 WL<<-function(x,y){
-  x<<-x
-  y<<-y
-  changeT();
+
+  x<-x
+  y<-y
+  
   
   diag<-function(x,y){
     
-
     
     diagUR<-function(x,y){
       if((x<depth)&&(y<depth)){
-        if(board[x+1,y+1]==turn){
+        if(board[y+1,x+1]==turn){
           return(1+diagUR(x+1,y+1))
         } else {
           return(0)
@@ -67,9 +70,9 @@ WL<<-function(x,y){
         } }
     
     diagDR<-function(x,y){
-      if((x<depth)&&(y>0)){
-        if(board[x+1,y-1]==turn){
-          return(1+diagUR(x+1,y+1))
+      if((x<depth)&&(y>1)){
+        if(board[y-1,x+1]==turn){
+          return(1+diagUR(x+1,y-1))
         } else {
           return(0)
         }} else {
@@ -77,9 +80,9 @@ WL<<-function(x,y){
         } }
     
     diagUL<-function(x,y){
-      if((x>0)&&(y<depth)){
-        if(board[x-1,y+1]==turn){
-          return(1+diagUR(x+1,y+1))
+      if((x>1)&&(y<depth)){
+        if(board[y+1,x-1]==turn){
+          return(1+diagUR(x-1,y+1))
         } else {
           return(0)
         }} else {
@@ -87,9 +90,9 @@ WL<<-function(x,y){
         } }
     
     diagDL<-function(x,y){
-      if((x>depth)&&(y>0)){
-        if(board[x-1,y-1]==turn){
-          return(1+diagUR(x+1,y+1))
+      if((x>1)&&(y>1)){
+        if(board[y-1,x-1]==turn){
+          return(1+diagUR(x-1,y-1))
         } else {
           return(0)
         }} else {
@@ -97,13 +100,13 @@ WL<<-function(x,y){
         } }
     
     
-    URDLconn <- diagUR(x,y) + diag(x,y)
-    DRULconn<-diagDR(x,y) + diag(x,y)
-    if((URDLconn>2)||(DRULconn>2)) {
-      changeT()
-      return(3)
+    URDLconn <<- diagUR(x,y) + diagDL(x,y)
+   DRULconn<<- diagDR(x,y) + diagUL(x,y)
+    if((URDLconn>1)||(DRULconn>1)) {
+
+      return(2)
     } else {
-      changeT()
+
       return(0)
     }
   }
@@ -111,10 +114,10 @@ WL<<-function(x,y){
   lat<-function(x,y) {
 
     
-    latU<-function(x,y){
-      if (y<depth) {
-        if(board[x,y+1]==turn) {
-          return(1+latU(x,y+1))
+    latD<-function(x,y){
+      if (y>1) {
+        if(board[y-1,x]==turn) {
+          return(1+latD(x,y-1))
         } else {
           return(0)
         }
@@ -123,10 +126,10 @@ WL<<-function(x,y){
       }
     }
     
-    latD<-function(x,y){
-      if (y>0) {
-        if(board[x,y-1]==turn) {
-          return(1+latU(x,y-1))
+    latL<-function(x,y){
+      if (x>1) {
+        if(board[y,x-1]==turn) {
+          return(1+latU(x-1,y))
         } else {
           return(0)
         }
@@ -137,7 +140,7 @@ WL<<-function(x,y){
     
     latR<-function(x,y){
       if (x<depth) {
-        if(board[x+1,y]==turn) {
+        if(board[y,x+1]==turn) {
           return(1+latU(x+1,y))
         } else {
           return(0)
@@ -147,10 +150,10 @@ WL<<-function(x,y){
       }
     }
     
-    latL<-function(x,y){
-      if (x>0) {
-        if(board[x-1,y]==turn) {
-          return(1+latU(x-1,y))
+    latU<-function(x,y){
+      if (y<depth) {
+        if(board[y+1,x]==turn) {
+          return(1+latU(x,y+1))
         } else {
           return(0)
         }
@@ -162,38 +165,76 @@ WL<<-function(x,y){
     
     
     
-    UDconn <- latU(x,y) + latD(x,y)
-    LRconn <- latR(x,y) + latL(x,y)
+    UDconn <<- latU(x,y) + latD(x,y)
+    LRconn <<- latR(x,y) + latL(x,y)
     
     
     #if want to adjust scale of win vector change 2 to depth-1
-    if ((UDconn>2)||(LRconn>2)) {
-      changeT()
-      return(3)
+    if ((UDconn>1)||(LRconn>1)) {
+      
+      return(2)
     } else {
-      changeT()
+      
       return(0)
     }
     
     
   }
-  
-  if ((lat(x,y) > 2)||(diag(x,y) > 2)) {
-    turn
-    "wins"
+  if ((lat(x,y) > 1)||(diag(x,y) > 1)) {
+    return(1)
+    
+  } else {
+    return(0)
   }
   
 }
 
 
-assembleBoard()
-3
+
+testL<<- function(){
+  assembleBoard()
 move(2,2)
 move(3,3)
 move(1,2)
 move(1,3)
 move(3,2)
+
+
+assembleBoard()
+move(2,2)
 move(2,3)
-WL(3,2)
+move(3,3)
+move(2,1)
 board
+move(1,1)
+
+
+}
+changeT()
+diagUR<-function(x,y){
+  if((x<depth)&&(y<depth)){
+    if(board[y+1,x+1]==turn){
+      print("sdfvd")
+      return(1+diagUR(x+1,y+1))
+    } else {
+      return(0)
+    }} else {
+      return(0)
+    } }
+
+move(2,2)
+move(2,3)
+move(3,3)
+board
+move(2,1)
+
+move(1,1)
+board
+diagUR(1,1)
+diag(1,1)
+
+testL()
+
+
+
 
