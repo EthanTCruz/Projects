@@ -4,6 +4,8 @@ rm(list=ls())
 
 
 
+
+
 assembleBoard<-function(){
   #commented out code is for scaling board to different sizes
   #  depth <<- as.integer(readline(prompt = "Please enter grid square length: ") ) 
@@ -42,9 +44,10 @@ move<-function(x,y){
     
     if (board[x,y]==" "){
       board[x,y] <<- turn
+
       if(WL(x,y)==turn) {
-        paste(turn," Wins")
-        gameOver <- T
+        gameOver <<- T
+        return(turn)
       } 
     changeT()
       
@@ -52,6 +55,9 @@ move<-function(x,y){
   }
   
 }
+
+
+
 
 
 #input is last played move
@@ -62,7 +68,7 @@ WL<<-function(x,y){
   
 
   
-  diag<-function(x,y){
+  diag<-function(y,x){
     
     diagUR<<-function(x,y){
       if((x<depth)&&(y<depth)){
@@ -117,7 +123,7 @@ WL<<-function(x,y){
 
   }
   
-  lat<-function(x,y) {
+  lat<-function(y,x) {
 
     
     latD<<-function(x,y){
@@ -197,6 +203,40 @@ WL<<-function(x,y){
   
 }
 
+# startGame<-function(){
+#   assembleBoard()
+#   while(gameOver==F) {
+#     loc<-readline(prompt = "Please enter move in format of x,y:  ")
+#     loc<-strsplit(loc,",")
+#     x<-as.integer(loc[[1]][1])
+#     y<-x<-as.integer(loc[[1]][2])
+#     move(x,y)
+#     board
+#     return(board)
+#   }
+# }
+# 
+# startGame()
+
+
+test<-function(){
+assembleBoard()
+move(2,2)
+move(1,1)
+move(1,3)
+move(3,3)
+move(3,1)
+board
+
+#wins
+WL(2,2)
+WL(1,3)
+WL(3,1)
+
+#loss
+changeT()
+WL(1,1)
+WL(3,3)
 
 
 assembleBoard()
@@ -207,21 +247,16 @@ move(1,2)
 move(3,3)
 board
 
-changeT()
+#wins
+
+WL(2,2)
+WL(1,1)
 WL(3,3)
 
-assembleBoard()
-move(2,2)
-move(1,1)
-move(1,3)
-move(3,3)
-move(3,1)
-board
-
+#loss
 changeT()
-WL(3,1)
-
-
+WL(2,1)
+WL(1,2)
 
 assembleBoard()
 move(2,2)
@@ -231,8 +266,101 @@ move(3,3)
 move(3,2)
 board
 
-changeT()
+#wins
 WL(3,2)
+WL(2,2)
+WL(1,2)
+
+#loss
+changeT()
+WL(1,1)
+WL(3,3)
+
+
+
+
+
+assembleBoard()
+move(1,3)
+move(2,2)
+move(1,1)
+move(2,1)
+move(3,3)
+move(2,3)
+board
+
+#win
+
+WL(2,3)
+WL(2,2)
+WL(2,1)
+
+#loss
+changeT()
+WL(1,1)
+WL(3,3)
+
+
+
+assembleBoard()
+move(2,1)
+move(2,2)
+move(1,1)
+move(1,3)
+move(3,3)
+move(3,1)
+board
+
+#wins
+WL(2,2)
+WL(1,3)
+WL(3,1)
+
+#loss
+changeT()
+WL(1,1)
+WL(3,3)
+
+
+assembleBoard()
+move(3,2)
+move(1,1)
+move(2,1)
+move(2,2)
+move(1,2)
+move(3,3)
+board
+
+#wins
+
+WL(2,2)
+WL(1,1)
+WL(3,3)
+
+#loss
+changeT()
+WL(2,1)
+WL(1,2)
+
+assembleBoard()
+move(3,1)
+move(2,2)
+move(1,1)
+move(1,2)
+move(3,3)
+move(3,2)
+board
+
+#wins
+WL(3,2)
+WL(2,2)
+WL(1,2)
+
+#loss
+changeT()
+WL(1,1)
+WL(3,3)
+
 
 
 
@@ -245,11 +373,17 @@ move(3,3)
 move(2,3)
 board
 
+#win
+
+WL(2,3)
+WL(2,2)
+WL(2,1)
+
+#loss
 changeT()
-WL(3,2)
-
-
-
+WL(1,1)
+WL(3,3)
+}
 
 
 
