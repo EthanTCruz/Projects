@@ -386,4 +386,15 @@ WL(3,3)
 }
 
 
-
+setWE<-function(){
+  setwd("C:/Users/ethan/Desktop/Projects")
+  dir.create("nnResources")
+  setwd("C:/Users/ethan/Desktop/Projects/nnResources")
+  file.create("board.csv")
+  
+  file.create("coeArray.csv")
+  events<-c("b","v","x","o","2x","2o")
+  vals<-c(0,0,0,0,0,0)
+  algArray<-data.frame(events,vals)
+  write.csv(algArray,'coeArray.csv')
+}
