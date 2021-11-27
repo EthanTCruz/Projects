@@ -29,6 +29,8 @@ assembleBoard<-function(){
   
 }
 
+assembleBoard()
+
 changeT<-function(){
   if (turn == "x"){
     turn <<- 'o'
@@ -397,4 +399,143 @@ setWE<-function(){
   vals<-c(0,0,0,0,0,0)
   algArray<-data.frame(events,vals)
   write.csv(algArray,'coeArray.csv')
+  syms<<-c()
+}
+
+write.csv(board,'board.csv')
+
+availMoves<-function(){
+  csBoard<<-read.csv(file='board.csv',header=T)
+  blanks<<-which(csBoard==" ")-depth
+  syms<<-c()
+  #board[2+depth]
+}
+
+u<-function(n){
+  
+  if(n>depth)
+  {
+    n<-n-depth
+    return(board[n])
+    
+  } else {
+    return("v")
+  }
+  
+}
+
+d<-function(n){
+  
+  if(n<=(depth^2)-depth)
+  {
+    n<-n+depth
+    return(board[n])
+    
+  } else {
+    return("v")
+  }
+  
+}
+
+l<-function(n){
+  
+  if((n%%depth)>1)
+  {
+    n<-n-1
+    return(board[n])
+    
+  } else {
+    return("v")
+  }
+  
+}
+
+r<-function(n){
+  
+  if((n%%depth)<depth)
+  {
+    n<-n+1
+    return(board[n])
+    
+  } else {
+    return("v")
+  }
+  
+}
+
+ur<-function(n){
+  
+  if(((n%%depth)<depth)&&(n>depth))
+  {
+    n<-n+1-depth
+    return(board[n])
+    
+  } else {
+    return("v")
+  }
+  
+}
+
+dr<-function(n){
+  
+  if(((n%%depth)<depth)&&(n<=(depth^2)-depth))
+  {
+    n<-n+1+depth
+    return(board[n])
+    
+  } else {
+    return("v")
+  }
+  
+}
+
+ul<-function(n){
+  
+  if(((n%%depth)>1)&&(n>depth))
+  {
+    n<-n-1-depth
+    return(board[n])
+    
+  } else {
+    return("v")
+  }
+  
+}
+
+dl<-function(n){
+  
+  if(((n%%depth)>1)&&(n<=(depth^2)-depth))
+  {
+    n<-n-1+depth
+    return(board[n])
+    
+  } else {
+    return("v")
+  }
+  
+}
+
+#still have to work on making connections functions for 2x and 2o
+
+syms<<-c()
+n<-1
+d(5)
+board
+syms
+u(n)
+d(n) 
+l(n)
+r(n)
+ur(n)
+ul(n) 
+dr(n)
+dl(n)
+c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+syms<<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+syms
+eval<-function(n){
+  
+  syms<<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+  
+  
 }
