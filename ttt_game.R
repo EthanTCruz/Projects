@@ -388,30 +388,37 @@ WL(3,3)
 }
 
 
-setWE<-function(){
+
+
+
+
+#-------------------------------------------------------------------
+#start of nn
+
+
+
+
+
+
+fullSetWE<-function(){
   setwd("C:/Users/ethan/Desktop/Projects")
   dir.create("nnResources")
   setwd("C:/Users/ethan/Desktop/Projects/nnResources")
-  file.create("board.csv")
-  
-  file.create("coeArray.csv")
-  events<-c("b","v","x","o","2x","2o")
-  vals<-c(0,0,0,0,0,0)
-  algArray<-data.frame(events,vals)
-  write.csv(algArray,'coeArray.csv')
-  syms<<-c()
+  file.create("symArray.csv")
+  events<<-c("b","v","x","o")
+  vals<-c(0,0,0,0)
+  symArray<-data.frame(events,vals)
+  write.csv(symArray,'symArray.csv')
 }
 
-write.csv(board,'board.csv')
 
 availMoves<-function(){
-  csBoard<<-read.csv(file='board.csv',header=T)
-  blanks<<-which(csBoard==" ")-depth
-  syms<<-c()
+which(board==" ")
+
   #board[2+depth]
 }
 
-u<-function(n){
+l<-function(n){
   
   if(n>depth)
   {
@@ -424,7 +431,7 @@ u<-function(n){
   
 }
 
-d<-function(n){
+r<-function(n){
   
   if(n<=(depth^2)-depth)
   {
@@ -437,9 +444,9 @@ d<-function(n){
   
 }
 
-l<-function(n){
+u<-function(n){
   
-  if((n%%depth)>1)
+  if(n>1)
   {
     n<-n-1
     return(board[n])
@@ -450,9 +457,9 @@ l<-function(n){
   
 }
 
-r<-function(n){
+d<-function(n){
   
-  if((n%%depth)<depth)
+  if(n<depth^2)
   {
     n<-n+1
     return(board[n])
@@ -463,9 +470,9 @@ r<-function(n){
   
 }
 
-ur<-function(n){
+dl<-function(n){
   
-  if(((n%%depth)<depth)&&(n>depth))
+  if((n<depth^2)&&(n>depth))
   {
     n<-n+1-depth
     return(board[n])
@@ -478,7 +485,7 @@ ur<-function(n){
 
 dr<-function(n){
   
-  if(((n%%depth)<depth)&&(n<=(depth^2)-depth))
+  if((n<depth^2)&&(n<=(depth^2)-depth))
   {
     n<-n+1+depth
     return(board[n])
@@ -502,7 +509,7 @@ ul<-function(n){
   
 }
 
-dl<-function(n){
+ur<-function(n){
   
   if(((n%%depth)>1)&&(n<=(depth^2)-depth))
   {
@@ -515,27 +522,94 @@ dl<-function(n){
   
 }
 
+v<-function(){
+  if(is.na(quant["v"])){
+    return(0)
+  }else {
+    return(as.numeric(quant["v"]))
+  }
+}
+
+b<-function(){
+  if(is.na(quant[" "])){
+    return(0)
+  }else {
+    return(as.numeric(quant[" "]))
+  }
+}
+
+vx<-function(){
+  if(is.na(quant["x"])){
+    return(0)
+  }else {
+    return(as.numeric(quant["x"]))
+  }
+}
+
+vo<-function(){
+  if(is.na(quant["o"])){
+    return(0)
+  }else {
+    return(as.numeric(quant["o"]))
+  }
+}
+
 #still have to work on making connections functions for 2x and 2o
 
-syms<<-c()
-n<-1
-d(5)
-board
-syms
-u(n)
-d(n) 
-l(n)
-r(n)
-ur(n)
-ul(n) 
-dr(n)
-dl(n)
-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
-syms<<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
-syms
-eval<-function(n){
+
+
+prioritize<-function(){
   
-  syms<<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+  origVals<-read.csv(file='symArray.csv')
+  avail<-c(which(board==" "))
+  priors<-lapply(avail,priorVal)
+
+    priorVal<-function(n) {
+  newVals<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+  quant<-table(newVals)
+  origVals<-read.csv(file='symArray.csv')
+  origVals<-as.numeric(origVals$vals)
+  
+  tot<-origVals[1]*b()
+  tot<-tot + origVals[2]*vo()
+  tot<-tot + origVals[3]*v()
+  tot<-tot + origVals[4]*vx()
+  return(tot)
+
+}
+  
+  
+}
+
+
+win<-function(n){
+  
+  newVals<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+  quant<-table(newVals)
+  origVals<-read.csv(file='symArray.csv')
+  origVals<-as.numeric(origVals$vals)
+  adjustors<- data.frame(b()/8,v()/8,vx()/8,vo()/8)
+  adjustors<-as.numeric(adjustors)
+  origVals<-origVals+adjustors
+  symArray$vals<-origVals
+  write.csv(symArray,'symArray.csv')
+  
+
+  
+}
+
+loss<-function(n){
+  
+  newVals<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+  quant<-table(newVals)
+  origVals<-read.csv(file='symArray.csv')
+  origVals<-as.numeric(origVals$vals)
+  adjustors<- data.frame(b()/8,v()/8,vx()/8,vo()/8)
+  adjustors<-as.numeric(adjustors)
+  origVals<-origVals-adjustors
+  symArray$vals<-origVals
+  write.csv(symArray,'symArray.csv')
+  
   
   
 }
