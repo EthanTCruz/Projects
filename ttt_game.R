@@ -423,7 +423,7 @@ fullSetWE<-function(){
 }
 
 halfSetWE<-function() {
-  setwd("C:/Users/ethan/Desktop/Projects/nnResources")
+  setwd("nnResources")
   events<<-c("b","v","x","o")
 }
 
@@ -575,7 +575,7 @@ evalQuant<-function(quant){
       return(as.numeric(quant["o"]))
     }
   }
-  return(data.frame(b()/8,v()/((depth+1)^2),vx()/8,vo()/8))
+  return(data.frame(b()/9,v()/((depth+1)^2),vx()/9,vo()/9))
 }
 
 
@@ -669,7 +669,8 @@ loss<<-function(n){
   symArray<-read.csv(file='symArray.csv')
   adjustors<- evalQuant(quant)
   adjustors<-as.numeric(adjustors)
-  origVals$vals<-origVals$vals-adjustors
+  #temp debating removal of loss function
+  #origVals$vals<-origVals$vals-adjustors
   symArray$vals<-origVals$vals
   vals<-c(origVals$vals)
   events<-c(symArray$events)
@@ -681,8 +682,13 @@ loss<<-function(n){
 }
 
 train<<-function(){
-  
+  move(3,3)
+  move(1,1)
+  move(3,1)
+  move(3,2)
 }
+
+#train()
 
 
 
