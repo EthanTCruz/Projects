@@ -53,6 +53,11 @@ move<<-function(x,y){
         assembleBoard()
         return(turn)
       } 
+      if(length(which(board==" "))==0)
+      {
+        assembleBoard()
+        return("draw")
+      }
     changeT()
     if(turn=='o') {
       ai()
@@ -219,7 +224,7 @@ WL<<-function(x,y){
 #     loc<-strsplit(loc,",")
 #     x<-as.integer(loc[[1]][1])
 #     y<-x<-as.integer(loc[[1]][2])
-#     move(x,y)
+#     move(y,x)
 #     board
 #     return(board)
 #   }
@@ -408,9 +413,8 @@ WL(3,3)
 
 
 fullSetWE<-function(){
-  setwd("C:/Users/ethan/Desktop/Projects")
   dir.create("nnResources")
-  setwd("C:/Users/ethan/Desktop/Projects/nnResources")
+  setwd("nnResources")
   file.create("symArray.csv")
   events<<-c("b","v","x","o")
   vals<-c(10,10,10,10)
@@ -571,7 +575,7 @@ evalQuant<-function(quant){
       return(as.numeric(quant["o"]))
     }
   }
-  return(data.frame(b()/8,v()/8,vx()/8,vo()/8))
+  return(data.frame(b()/8,v()/((depth+1)^2),vx()/8,vo()/8))
 }
 
 
@@ -601,7 +605,7 @@ prioritize<-function(){
     origVals<-read.csv(file='symArray.csv')
     avail<-c(which(board==" "))
     symPriors<-lapply(avail,symVal)
-    moves<-avail[which.max(symPriors)]
+    moves<<-avail[which.max(symPriors)]
     
     ba<-moves/depth
     x<-(ba-as.integer(ba))*depth
@@ -620,9 +624,10 @@ prioritize<-function(){
 ai<<-function(){
   #ai is only set to play as o
   if(gameOver!=T) {
+
  det<-prioritize()
-  aix<<-as.numeric(det[1])
-  aiy<<-as.numeric(det[2])
+  aix<<-ceiling(det[1])
+  aiy<<-ceiling(det[2])
   move(aix,aiy) 
   } else {
   if(gameOver==T){
@@ -642,10 +647,14 @@ win<<-function(n){
   newVals<-symEval(n)
   quant<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
+  symArray<-read.csv(file='symArray.csv')
   adjustors<- evalQuant(quant)
   adjustors<-as.numeric(adjustors)
   origVals$vals<-origVals$vals+adjustors
   symArray$vals<-origVals$vals
+  vals<-c(origVals$vals)
+  events<-c(symArray$events)
+  symArray<-data.frame(events,vals)
   write.csv(symArray,file='symArray.csv')
   
 
@@ -657,16 +666,23 @@ loss<<-function(n){
   newVals<-symEval(n)
   quant<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
-  origVals<-as.numeric(origVals$vals)
+  symArray<-read.csv(file='symArray.csv')
   adjustors<- evalQuant(quant)
   adjustors<-as.numeric(adjustors)
-  origVals<-origVals-adjustors
-  symArray$vals<-origVals
-  write.csv(symArray,'symArray.csv')
+  origVals$vals<-origVals$vals-adjustors
+  symArray$vals<-origVals$vals
+  vals<-c(origVals$vals)
+  events<-c(symArray$events)
+  symArray<-data.frame(events,vals)
+  write.csv(symArray,file='symArray.csv')
   
   
   
 }
 
-ai()
+train<<-function(){
+  
+}
+
+
 
