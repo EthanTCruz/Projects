@@ -40,7 +40,7 @@ changeT<-function(){
 }
 
 
-move<-function(x,y){
+move<<-function(x,y){
   #change to while function with prompt once win condition is established
   if (gameOver == F) {
     
@@ -49,15 +49,22 @@ move<-function(x,y){
 
       if(WL(x,y)==turn) {
         gameOver <<- T
+        ai()
+        assembleBoard()
         return(turn)
       } 
     changeT()
+    if(turn=='o') {
+      ai()
       
     }
-  }
+    
+      
+    }
+  } 
+  return(board)
   
 }
-
 
 
 
@@ -406,9 +413,14 @@ fullSetWE<-function(){
   setwd("C:/Users/ethan/Desktop/Projects/nnResources")
   file.create("symArray.csv")
   events<<-c("b","v","x","o")
-  vals<-c(0,0,0,0)
-  symArray<-data.frame(events,vals)
+  vals<-c(10,10,10,10)
+  symArray<<-data.frame(events,vals)
   write.csv(symArray,'symArray.csv')
+}
+
+halfSetWE<-function() {
+  setwd("C:/Users/ethan/Desktop/Projects/nnResources")
+  events<<-c("b","v","x","o")
 }
 
 
@@ -418,6 +430,7 @@ which(board==" ")
   #board[2+depth]
 }
 
+symEval<-function(n){
 l<-function(n){
   
   if(n>depth)
@@ -522,37 +535,45 @@ ur<-function(n){
   
 }
 
-v<-function(){
-  if(is.na(quant["v"])){
-    return(0)
-  }else {
-    return(as.numeric(quant["v"]))
-  }
+
+return(c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n)))
 }
 
-b<-function(){
-  if(is.na(quant[" "])){
-    return(0)
-  }else {
-    return(as.numeric(quant[" "]))
+evalQuant<-function(quant){
+  v<-function(){
+    if(is.na(quant["v"])){
+      return(0)
+    }else {
+      return(as.numeric(quant["v"]))
+    }
   }
+  
+  b<-function(){
+    if(is.na(quant[" "])){
+      return(0)
+    }else {
+      return(as.numeric(quant[" "]))
+    }
+  }
+  
+  vx<-function(){
+    if(is.na(quant["x"])){
+      return(0)
+    }else {
+      return(as.numeric(quant["x"]))
+    }
+  }
+  
+  vo<-function(){
+    if(is.na(quant["o"])){
+      return(0)
+    }else {
+      return(as.numeric(quant["o"]))
+    }
+  }
+  return(data.frame(b()/8,v()/8,vx()/8,vo()/8))
 }
 
-vx<-function(){
-  if(is.na(quant["x"])){
-    return(0)
-  }else {
-    return(as.numeric(quant["x"]))
-  }
-}
-
-vo<-function(){
-  if(is.na(quant["o"])){
-    return(0)
-  }else {
-    return(as.numeric(quant["o"]))
-  }
-}
 
 #still have to work on making connections functions for 2x and 2o
 
@@ -560,51 +581,84 @@ vo<-function(){
 
 prioritize<-function(){
   
-  origVals<-read.csv(file='symArray.csv')
-  avail<-c(which(board==" "))
-  priors<-lapply(avail,priorVal)
 
-    priorVal<-function(n) {
-  newVals<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
-  quant<-table(newVals)
+
+    symVal<-function(n) {
+  newVals<-symEval(n)
+  quant<<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
   origVals<-as.numeric(origVals$vals)
+  coe<-as.numeric(evalQuant(quant)*8)
   
-  tot<-origVals[1]*b()
-  tot<-tot + origVals[2]*vo()
-  tot<-tot + origVals[3]*v()
-  tot<-tot + origVals[4]*vx()
+  tot<-origVals[1]*coe[1]
+  tot<-tot + origVals[2]*coe[4]
+  tot<-tot + origVals[3]*coe[2]
+  tot<-tot + origVals[4]*coe[3]
   return(tot)
 
-}
+    }
+    
+    origVals<-read.csv(file='symArray.csv')
+    avail<-c(which(board==" "))
+    symPriors<-lapply(avail,symVal)
+    moves<-avail[which.max(symPriors)]
+    
+    ba<-moves/depth
+    x<-(ba-as.integer(ba))*depth
+    y<-ceiling(ba)
+    if(x==0){
+      x<-depth
+    }
+ 
+    moves<-c(x,y)
+    
+    return(moves)
   
   
 }
 
-
-win<-function(n){
+ai<<-function(){
+  #ai is only set to play as o
+  if(gameOver!=T) {
+ det<-prioritize()
+  aix<<-as.numeric(det[1])
+  aiy<<-as.numeric(det[2])
+  move(aix,aiy) 
+  } else {
+  if(gameOver==T){
+    if (turn=='o'){
+      win(moves)
+    } else {
+    loss(moves)
+  }
+  }
+  }
   
-  newVals<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+}
+
+
+win<<-function(n){
+  
+  newVals<-symEval(n)
   quant<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
-  origVals<-as.numeric(origVals$vals)
-  adjustors<- data.frame(b()/8,v()/8,vx()/8,vo()/8)
+  adjustors<- evalQuant(quant)
   adjustors<-as.numeric(adjustors)
-  origVals<-origVals+adjustors
-  symArray$vals<-origVals
-  write.csv(symArray,'symArray.csv')
+  origVals$vals<-origVals$vals+adjustors
+  symArray$vals<-origVals$vals
+  write.csv(symArray,file='symArray.csv')
   
 
   
 }
 
-loss<-function(n){
+loss<<-function(n){
   
-  newVals<-c(u(n),d(n),l(n),r(n),ur(n),ul(n),dr(n),dl(n))
+  newVals<-symEval(n)
   quant<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
   origVals<-as.numeric(origVals$vals)
-  adjustors<- data.frame(b()/8,v()/8,vx()/8,vo()/8)
+  adjustors<- evalQuant(quant)
   adjustors<-as.numeric(adjustors)
   origVals<-origVals-adjustors
   symArray$vals<-origVals
@@ -613,3 +667,6 @@ loss<-function(n){
   
   
 }
+
+ai()
+
