@@ -416,9 +416,14 @@ fullSetWE<-function(){
   dir.create("nnResources")
   setwd("nnResources")
   file.create("symArray.csv")
+  file.create("connArray.csv")
+  connEvents<-c("b","o","x")
+  connVals<-c(10,10,10)
   events<<-c("b","v","x","o")
   vals<-c(10,10,10,10)
-  symArray<<-data.frame(events,vals)
+  symArray<-data.frame(events,vals)
+  connArray<-data.frame(connEvents,connVals)
+  write.csv(connArray,'connArray.csv')
   write.csv(symArray,'symArray.csv')
 }
 
@@ -434,8 +439,71 @@ which(board==" ")
   #board[2+depth]
 }
 
+priorConnEval<-function(n){
+  
+
+  
+  connL<-function(n){
+    or<-l(n);
+    if(or==l(n-depth)){
+      return(or)
+    }
+  }
+  connR<-function(n){
+    or<-r(n);
+    if(or==r(n+depth)){
+      return(or)
+    }
+  }
+  connU<-function(n){
+    or<-u(n);
+    if(or==u(n-1)){
+      return(or)
+    }
+  }
+  connD<-function(n){
+    or<-d(n);
+    if(or==d(n+1)){
+      return(or)
+    }
+  }
+  connUR<-function(n){
+    or<-ur(n);
+    if(or==ur(n-1+depth)){
+      return(or)
+    }
+  }
+  connDR<-function(n){
+    or<-dr(n);
+    if(or==dr(n+1+depth)){
+      return(or)
+    }
+  }
+  connUL<-function(n){
+    or<-ul(n);
+    if(or==ul(n-1-depth)){
+      return(or)
+    }
+  }
+  connDL<-function(n){
+    or<-dl(n);
+    if(or==dl(n+1-depth)){
+      return(or)
+    }
+  }
+  
+
+  conns<-c(connU(n),connD(n),connL(n),connR(n),connUR(n),connUL(n),connDR(n),connDL(n))
+  conns<-conns[conns!="v"]
+  
+  return(conns)
+}
+
+#if sym functions work globally delete this
+
+
 symEval<-function(n){
-l<-function(n){
+l<<-function(n){
   
   if(n>depth)
   {
@@ -448,7 +516,7 @@ l<-function(n){
   
 }
 
-r<-function(n){
+r<<-function(n){
   
   if(n<=(depth^2)-depth)
   {
@@ -461,9 +529,9 @@ r<-function(n){
   
 }
 
-u<-function(n){
+u<<-function(n){
   
-  if(n>1)
+  if((n>1)&&(n%%depth!=1))
   {
     n<-n-1
     return(board[n])
@@ -474,9 +542,9 @@ u<-function(n){
   
 }
 
-d<-function(n){
+d<<-function(n){
   
-  if(n<depth^2)
+  if((n<depth^2)&&(n%%depth!=0))
   {
     n<-n+1
     return(board[n])
@@ -487,9 +555,9 @@ d<-function(n){
   
 }
 
-dl<-function(n){
+dl<<-function(n){
   
-  if((n<depth^2)&&(n>depth))
+  if((n<depth^2)&&(n%%depth!=0)&&(n>depth))
   {
     n<-n+1-depth
     return(board[n])
@@ -500,9 +568,9 @@ dl<-function(n){
   
 }
 
-dr<-function(n){
+dr<<-function(n){
   
-  if((n<depth^2)&&(n<=(depth^2)-depth))
+  if((n<depth^2)&&(n%%depth!=0)&&(n<=(depth^2)-depth))
   {
     n<-n+1+depth
     return(board[n])
@@ -513,9 +581,9 @@ dr<-function(n){
   
 }
 
-ul<-function(n){
+ul<<-function(n){
   
-  if(((n%%depth)>1)&&(n>depth))
+  if((n%%depth!=1)&&(n>depth))
   {
     n<-n-1-depth
     return(board[n])
@@ -526,9 +594,9 @@ ul<-function(n){
   
 }
 
-ur<-function(n){
+ur<<-function(n){
   
-  if(((n%%depth)>1)&&(n<=(depth^2)-depth))
+  if((n>1)&&(n%%depth!=1)&&(n<=(depth^2)-depth))
   {
     n<-n-1+depth
     return(board[n])
@@ -592,7 +660,7 @@ prioritize<-function(){
   quant<<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
   origVals<-as.numeric(origVals$vals)
-  coe<-as.numeric(evalQuant(quant)*8)
+  coe<-as.numeric(evalQuant(quant))
   
   tot<-origVals[1]*coe[1]
   tot<-tot + origVals[2]*coe[4]
@@ -601,6 +669,21 @@ prioritize<-function(){
   return(tot)
 
     }
+    
+    connVal<-function(n) {
+      newVals<-priorConnEval(n)
+      quant<<-table(newVals)
+      origVals<-read.csv(file='connArray.csv')
+      origVals<-as.numeric(origVals$connVals)
+      coe<-as.numeric(evalQuant(quant))
+      
+      tot<-origVals[1]*coe[1]
+      tot<-tot + origVals[2]*coe[2]
+      tot<-tot + origVals[3]*coe[3]
+      return(tot)
+      
+    }
+    
     
     origVals<-read.csv(file='symArray.csv')
     avail<-c(which(board==" "))
@@ -634,7 +717,8 @@ ai<<-function(){
     if (turn=='o'){
       win(moves)
     } else {
-    loss(moves)
+      #temp debating removal of loss function
+   # loss(moves)
   }
   }
   }
@@ -669,8 +753,8 @@ loss<<-function(n){
   symArray<-read.csv(file='symArray.csv')
   adjustors<- evalQuant(quant)
   adjustors<-as.numeric(adjustors)
-  #temp debating removal of loss function
-  #origVals$vals<-origVals$vals-adjustors
+
+  origVals$vals<-origVals$vals-adjustors
   symArray$vals<-origVals$vals
   vals<-c(origVals$vals)
   events<-c(symArray$events)
@@ -689,6 +773,9 @@ train<<-function(){
 }
 
 #train()
-
+#check and make sure directional core scanners, u,d,l,r,dr,dl,ur,ul are correct
+#integrate connectionn evaluation and incorporation of priorConnEval with csv 
+#adjust prioritization with connection coefficients as quadratic (x^2) and sym coefficients as first degree (x^1)
+#assemble formula evaluator for prioritization with new quadraticf formula to create values
 
 
