@@ -418,7 +418,7 @@ fullSetWE<-function(){
   file.create("symArray.csv")
   file.create("connArray.csv")
   connEvents<-c("b","o","x")
-  connVals<-c(10,10,10)
+  connVals<-c(0,0,0)
   events<<-c("b","v","x","o")
   vals<-c(10,10,10,10)
   symArray<-data.frame(events,vals)
@@ -647,7 +647,7 @@ evalQuant<-function(quant){
 }
 
 
-#still have to work on making connections functions for 2x and 2o
+
 
 
 
@@ -657,10 +657,10 @@ prioritize<-function(){
 
     symVal<-function(n) {
   newVals<-symEval(n)
-  quant<<-table(newVals)
+  quantSym<<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
   origVals<-as.numeric(origVals$vals)
-  coe<-as.numeric(evalQuant(quant))
+  coe<-as.numeric(evalQuant(quantSym))
   
   tot<-origVals[1]*coe[1]
   tot<-tot + origVals[2]*coe[4]
@@ -672,10 +672,10 @@ prioritize<-function(){
     
     connVal<-function(n) {
       newVals<-priorConnEval(n)
-      quant<<-table(newVals)
+      quantConn<<-table(newVals)
       origVals<-read.csv(file='connArray.csv')
       origVals<-as.numeric(origVals$connVals)
-      coe<-as.numeric(evalQuant(quant))
+      coe<-as.numeric(evalQuant(quantConn))
       coe<-coe[-2]
       
       tot<-coe[1] * origVals[1]
@@ -685,11 +685,21 @@ prioritize<-function(){
       
     }
     
+    process<-function(){
+      avail<-c(which(board==" "))
+      symPriors<-lapply(avail,symVal)
+      connPriors<-lapply(avail,connVal)
+      connPriors<-as.numeric(connPriors)^2
+      symPriors <- as.numeric(symPriors)
+      calc<-connPriors+symPriors
+      return(calc)
+    }
     
+    calc<-process()
     origVals<-read.csv(file='symArray.csv')
     avail<-c(which(board==" "))
     symPriors<-lapply(avail,symVal)
-    moves<<-avail[which.max(symPriors)]
+    moves<<-avail[which.max(calc)]
     
     ba<-moves/depth
     x<-(ba-as.integer(ba))*depth
@@ -730,10 +740,10 @@ ai<<-function(){
 win<<-function(n){
   
   newVals<-symEval(n)
-  quant<-table(newVals)
+  quantSym<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
   symArray<-read.csv(file='symArray.csv')
-  adjustors<- evalQuant(quant)
+  adjustors<- evalQuant(quantSym)
   adjustors<-as.numeric(adjustors)
   origVals$vals<-origVals$vals+adjustors
   symArray$vals<-origVals$vals
@@ -741,6 +751,19 @@ win<<-function(n){
   events<-c(symArray$events)
   symArray<-data.frame(events,vals)
   write.csv(symArray,file='symArray.csv')
+  
+  newVals<-priorConnEval(n)
+  quantConn<-table(newVals)
+  origVals<-read.csv(file='connArray.csv')
+  connArray<-read.csv(file='connArray.csv')
+  adjustors<- evalQuant(quantConn)[-2]
+  adjustors<-as.numeric(adjustors)
+  origVals$connVals<-origVals$connVals+adjustors
+  connArray$connVals<-origVals$connVals
+  connVals<-c(origVals$connVals)
+  connEvents<-c(connArray$connEvents)
+  connArray<-data.frame(connEvents,connVals)
+  write.csv(connArray,file='connArray.csv')
   
 
   
