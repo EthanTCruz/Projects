@@ -676,10 +676,11 @@ prioritize<-function(){
       origVals<-read.csv(file='connArray.csv')
       origVals<-as.numeric(origVals$connVals)
       coe<-as.numeric(evalQuant(quant))
+      coe<-coe[-2]
       
-      tot<-origVals[1]*coe[1]
-      tot<-tot + origVals[2]*coe[2]
-      tot<-tot + origVals[3]*coe[3]
+      tot<-coe[1] * origVals[1]
+      tot<-tot +coe[2] * origVals[2]
+      tot<-tot + coe[3] * origVals[3]
       return(tot)
       
     }
