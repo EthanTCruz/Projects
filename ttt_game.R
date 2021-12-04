@@ -413,6 +413,19 @@ WL(3,3)
 
 
 fullSetWE<-function(){
+
+  if(dir.exists("../nnResources")) {
+    file.create("symArray.csv")
+    file.create("connArray.csv")
+    connEvents<-c("b","o","x")
+    connVals<-c(0,0,0)
+    events<<-c("b","v","x","o")
+    vals<-c(0,0,0,0)
+    symArray<-data.frame(events,vals)
+    connArray<-data.frame(connEvents,connVals)
+    write.csv(connArray,'connArray.csv')
+    write.csv(symArray,'symArray.csv')
+  } else {
   dir.create("nnResources")
   setwd("nnResources")
   file.create("symArray.csv")
@@ -420,17 +433,14 @@ fullSetWE<-function(){
   connEvents<-c("b","o","x")
   connVals<-c(0,0,0)
   events<<-c("b","v","x","o")
-  vals<-c(10,10,10,10)
+  vals<-c(0,0,0,0)
   symArray<-data.frame(events,vals)
   connArray<-data.frame(connEvents,connVals)
   write.csv(connArray,'connArray.csv')
   write.csv(symArray,'symArray.csv')
+  }
 }
 
-halfSetWE<-function() {
-  setwd("nnResources")
-  events<<-c("b","v","x","o")
-}
 
 
 availMoves<-function(){
@@ -720,16 +730,15 @@ ai<<-function(){
   if(gameOver!=T) {
 
  det<-prioritize()
-  aix<<-ceiling(det[1])
-  aiy<<-ceiling(det[2])
+  aix<-ceiling(det[1])
+  aiy<-ceiling(det[2])
   move(aix,aiy) 
   } else {
   if(gameOver==T){
     if (turn=='o'){
       win(moves)
     } else {
-      #temp debating removal of loss function
-   # loss(moves)
+   loss(moves)
   }
   }
   }
@@ -745,7 +754,7 @@ win<<-function(n){
   symArray<-read.csv(file='symArray.csv')
   adjustors<- evalQuant(quantSym)
   adjustors<-as.numeric(adjustors)
-  origVals$vals<-origVals$vals+adjustors
+  origVals$vals<-origVals$vals-adjustors
   symArray$vals<-origVals$vals
   vals<-c(origVals$vals)
   events<-c(symArray$events)
@@ -758,7 +767,7 @@ win<<-function(n){
   connArray<-read.csv(file='connArray.csv')
   adjustors<- evalQuant(quantConn)[-2]
   adjustors<-as.numeric(adjustors)
-  origVals$connVals<-origVals$connVals+adjustors
+  origVals$connVals<-origVals$connVals-adjustors
   connArray$connVals<-origVals$connVals
   connVals<-c(origVals$connVals)
   connEvents<-c(connArray$connEvents)
@@ -772,12 +781,11 @@ win<<-function(n){
 loss<<-function(n){
   
   newVals<-symEval(n)
-  quant<-table(newVals)
+  quantSym<-table(newVals)
   origVals<-read.csv(file='symArray.csv')
   symArray<-read.csv(file='symArray.csv')
-  adjustors<- evalQuant(quant)
+  adjustors<- evalQuant(quantSym)
   adjustors<-as.numeric(adjustors)
-
   origVals$vals<-origVals$vals-adjustors
   symArray$vals<-origVals$vals
   vals<-c(origVals$vals)
@@ -785,21 +793,36 @@ loss<<-function(n){
   symArray<-data.frame(events,vals)
   write.csv(symArray,file='symArray.csv')
   
+  newVals<-priorConnEval(n)
+  quantConn<-table(newVals)
+  origVals<-read.csv(file='connArray.csv')
+  connArray<-read.csv(file='connArray.csv')
+  adjustors<- evalQuant(quantConn)[-2]
+  adjustors<-as.numeric(adjustors)
+  origVals$connVals<-origVals$connVals-adjustors
+  connArray$connVals<-origVals$connVals
+  connVals<-c(origVals$connVals)
+  connEvents<-c(connArray$connEvents)
+  connArray<-data.frame(connEvents,connVals)
+  write.csv(connArray,file='connArray.csv')
+  
   
   
 }
 
 train<<-function(){
   move(3,3)
-  move(1,1)
+  move(1,2)
   move(3,1)
   move(3,2)
+  
+  move(1,1)
+  move(1,2)
+  move(3,2)
+  move(3,3)
+  
 }
 
-#train()
-#check and make sure directional core scanners, u,d,l,r,dr,dl,ur,ul are correct
-#integrate connectionn evaluation and incorporation of priorConnEval with csv 
-#adjust prioritization with connection coefficients as quadratic (x^2) and sym coefficients as first degree (x^1)
-#assemble formula evaluator for prioritization with new quadraticf formula to create values
+
 
 
