@@ -418,7 +418,6 @@ fullSetWE<-function(){
     file.create("symArray.csv")
     file.create("connArray.csv")
     file.create("relArray.csv")
-    #relEvents<-c("Rl","URDL","ULDR","UL","DR","UR","DL","URD","ULD","DRU","DLU","URUL","DRDL","DRUR","ULDL")
     relValb<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
     relValo<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
     relValx<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
@@ -442,13 +441,12 @@ fullSetWE<-function(){
   connVals<-c(0,0,0)
   events<<-c("b","v","x","o")
   vals<-c(0,0,0,0)
-  #relEvents<-c("Rl","URDL","ULDR","UL","DR","UR","DL","URD","ULD","DRU","DLU","URUL","DRDL","DRUR","ULDL")
   relValb<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+  relValo<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
   relValx<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-  relValy<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
   symArray<-data.frame(events,vals)
   connArray<-data.frame(connEvents,connVals)
-  relArray<-data.frame(relEvents,relVals)
+  relArray<-data.frame(relValb,relValo,relValx)
   write.csv(relArray,'relArray.csv')
   write.csv(connArray,'connArray.csv')
   write.csv(symArray,'symArray.csv')
@@ -1119,26 +1117,45 @@ train<<-function(){
   move(3,1)
   move(3,2)
   
+  assembleBoard()
+  move(3,3)
+  move(1,2)
+  move(3,1)
+  move(3,2)
+  
+  assembleBoard()
   move(1,1)
   move(1,2)
   move(3,2)
   move(3,3)
   
+  assembleBoard()
+  move(1,1)
+  move(1,2)
+  move(3,2)
+  move(3,3)
+  
+  assembleBoard()
   move(2,2)
   move(1,3)
   move(3,1)
   
+  assembleBoard()
   move(2,2)
   move(1,3)
   move(3,1)
   move(2,1)
   move(2,3)
   
+  assembleBoard()
   move(2,2)
-  move(1,2)
-  move(3,2)
+  move(1,3)
+  move(3,1)
+  move(2,1)
+  move(2,3)
   
-  move()
+
+
 }
 
 
