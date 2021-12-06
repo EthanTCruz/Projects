@@ -417,12 +417,19 @@ fullSetWE<-function(){
   if(dir.exists("../nnResources")) {
     file.create("symArray.csv")
     file.create("connArray.csv")
+    file.create("relArray.csv")
+    #relEvents<-c("Rl","URDL","ULDR","UL","DR","UR","DL","URD","ULD","DRU","DLU","URUL","DRDL","DRUR","ULDL")
+    relValb<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    relValo<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    relValx<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
     connEvents<-c("b","o","x")
     connVals<-c(0,0,0)
     events<<-c("b","v","x","o")
     vals<-c(0,0,0,0)
     symArray<-data.frame(events,vals)
     connArray<-data.frame(connEvents,connVals)
+    relArray<-data.frame(relValb,relValo,relValx)
+    write.csv(relArray,'relArray.csv')
     write.csv(connArray,'connArray.csv')
     write.csv(symArray,'symArray.csv')
   } else {
@@ -430,12 +437,19 @@ fullSetWE<-function(){
   setwd("nnResources")
   file.create("symArray.csv")
   file.create("connArray.csv")
+  file.create("relArray.csv")
   connEvents<-c("b","o","x")
   connVals<-c(0,0,0)
   events<<-c("b","v","x","o")
   vals<-c(0,0,0,0)
+  #relEvents<-c("Rl","URDL","ULDR","UL","DR","UR","DL","URD","ULD","DRU","DLU","URUL","DRDL","DRUR","ULDL")
+  relValb<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+  relValx<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+  relValy<-c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
   symArray<-data.frame(events,vals)
   connArray<-data.frame(connEvents,connVals)
+  relArray<-data.frame(relEvents,relVals)
+  write.csv(relArray,'relArray.csv')
   write.csv(connArray,'connArray.csv')
   write.csv(symArray,'symArray.csv')
   }
@@ -448,6 +462,248 @@ which(board==" ")
 
   #board[2+depth]
 }
+
+relEval<-function(n){
+  
+  L<-function(n){
+    
+    if(n>depth)
+    {
+      n<-n-depth
+      return(board[n])
+      
+    } else {
+      return("v")
+    }
+    
+  }
+  
+  R<-function(n){
+    
+    if(n<=(depth^2)-depth)
+    {
+      n<-n+depth
+      return(board[n])
+      
+    } else {
+      return("v")
+    }
+    
+  }
+  
+  U<-function(n){
+    
+    if((n>1)&&(n%%depth!=1))
+    {
+      n<-n-1
+      return(board[n])
+      
+    } else {
+      return("v")
+    }
+    
+  }
+  
+  D<-function(n){
+    
+    if((n<depth^2)&&(n%%depth!=0))
+    {
+      n<-n+1
+      return(board[n])
+      
+    } else {
+      return("v")
+    }
+    
+  }
+  
+  DL<-function(n){
+    
+    if((n<depth^2)&&(n%%depth!=0)&&(n>depth))
+    {
+      n<-n+1-depth
+      return(board[n])
+      
+    } else {
+      return("v")
+    }
+    
+  }
+  
+  DR<-function(n){
+    
+    if((n<depth^2)&&(n%%depth!=0)&&(n<=(depth^2)-depth))
+    {
+      n<-n+1+depth
+      return(board[n])
+      
+    } else {
+      return("v")
+    }
+    
+  }
+  
+  UL<-function(n){
+    
+    if((n%%depth!=1)&&(n>depth))
+    {
+      n<-n-1-depth
+      return(board[n])
+      
+    } else {
+      return("v")
+    }
+    
+  }
+  
+  UR<-function(n){
+    
+    if((n>1)&&(n%%depth!=1)&&(n<=(depth^2)-depth))
+    {
+      n<-n-1+depth
+      return(board[n])
+      
+    } else {
+      return("v")
+    }
+    
+  }
+  
+  relRL<-function(n){
+    if (R(n)==L(n)){
+      return(R(n))
+    } else {
+      return(0)
+    }
+  }
+    
+  relURDL<-function(n){
+    if (UR(n)==DL(n)){
+      return(UR(n))
+    } else {
+      return(0)
+    }
+  }  
+    
+  relULDR<-function(n){
+    if (UL(n)==DR(n)){
+      return(UL(n))
+    } else {
+      return(0)
+    }
+  }  
+  
+  relUL<-function(n){
+    if (U(n)==L(n)){
+      return(U(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relDR<-function(n){
+    if (D(n)==R(n)){
+      return(D(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relUR<-function(n){
+    if (U(n)==R(n)){
+      return(U(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  
+  relDL<-function(n){
+    if (D(n)==L(n)){
+      return(D(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relURD<-function(n){
+    if (UR(n)==D(n)){
+      return(UR(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relULD<-function(n){
+    if (UL(n)==D(n)){
+      return(UL(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relDRU<-function(n){
+    if (DR(n)==U(n)){
+      return(DR(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relDLU<-function(n){
+    if (DL(n)==U(n)){
+      return(DL(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relURUL<-function(n){
+    if (UR(n)==UL(n)){
+      return(UR(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relDRDL<-function(n){
+    if (DR(n)==DL(n)){
+      return(DR(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relDRUR<-function(n){
+    if (DR(n)==UR(n)){
+      return(DR(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  relULDL<-function(n){
+    if (UL(n)==DL(n)){
+      return(UL(n))
+    } else {
+      return(0)
+    }
+  }
+  
+  
+  relations<-c(relRL(n),relURDL(n),relULDR(n),relUL(n),relDR(n),
+               relUR(n),relDL(n),relURD(n),relULD(n),relDRU(n),relDLU(n),relURUL(n),relDRDL(n),relDRUR(n),relULDL(n))
+  relations[relations==' ']<-'b'
+  
+  return(relations)
+
+    
+    
+  
+  
+}
+
+
 
 priorConnEval<-function(n){
   
@@ -695,13 +951,29 @@ prioritize<-function(){
       
     }
     
+    relVal<-function(n){
+      relVals<-read.csv(file='relArray.csv')
+      coeb<-as.numeric(relVals$relValb)
+      coeo<-as.numeric(relVals$relValo)
+      coex<-as.numeric(relVals$relValx)
+      
+      quant<-relEval(n)
+        tot<-sum(coeb[quant=='b'])
+        tot<-tot+sum(coeo[quant=='o'])
+        tot<-tot+sum(coex[quant=='x'])
+        return(tot)
+      
+      
+    }
+    
     process<-function(){
       avail<-c(which(board==" "))
       symPriors<-lapply(avail,symVal)
       connPriors<-lapply(avail,connVal)
-      connPriors<-as.numeric(connPriors)^2
+      relPriors<-as.numeric(lapply(avail,relVal))
+      connPriors<-as.numeric(connPriors)
       symPriors <- as.numeric(symPriors)
-      calc<-connPriors+symPriors
+      calc<-connPriors+symPriors+relPriors
       return(calc)
     }
     
@@ -774,6 +1046,21 @@ win<<-function(n){
   connArray<-data.frame(connEvents,connVals)
   write.csv(connArray,file='connArray.csv')
   
+  relVals<-read.csv(file='relArray.csv')
+  coeb<-as.numeric(relVals$relValb)
+  coeo<-as.numeric(relVals$relValo)
+  coex<-as.numeric(relVals$relValx)
+  quant<-relEval(n)
+  coeb[quant=='b']<-coeb[quant=='b']+1/9
+  coeo[quant=='o']<-coeb[quant=='o']+1/9
+  coex[quant=='x']<-coeb[quant=='x']+1/9
+    relValb<-coeb
+    relValo<-coeo
+    relValx<-coex
+  relVals<-data.frame(relValb,relValo,relValx)
+  write.csv(relVals,'relArray.csv')
+  
+  
 
   
 }
@@ -806,6 +1093,19 @@ loss<<-function(n){
   connArray<-data.frame(connEvents,connVals)
   write.csv(connArray,file='connArray.csv')
   
+  relVals<-read.csv(file='relArray.csv')
+  coeb<-as.numeric(relVals$relValb)
+  coeo<-as.numeric(relVals$relValo)
+  coex<-as.numeric(relVals$relValx)
+  quant<-relEval(n)
+  coeb[quant=='b']<-coeb[quant=='b']-1/9
+  coeo[quant=='o']<-coeb[quant=='o']-1/9
+  coex[quant=='x']<-coeb[quant=='x']-1/9
+  relValb<-coeb
+  relValo<-coeo
+  relValx<-coex
+  relVals<-data.frame(relValb,relValo,relValx)
+  write.csv(relVals,'relArray.csv')
   
   
 }
@@ -823,6 +1123,24 @@ train<<-function(){
   
 }
 
+train2<-function(){
+  assembleBoard()
+  move(1,1)
+  move(2,2)
+  move(1,2)
+  move(1,3)
+  
+  move(2,2)
+  move(1,1)
+  move(3,3)
+  
+  move(2,2)
+  move(1,3)
+  move(3,3)
+  
+  
+}
 
+#change formulat to linear?
 
 
