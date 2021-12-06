@@ -985,11 +985,12 @@ prioritize<-function(){
     
     ba<-moves/depth
     x<-(ba-as.integer(ba))*depth
+    x<-round(x,digits=1)
     y<-ceiling(ba)
     if(x==0){
       x<-depth
     }
- 
+    
     moves<-c(x,y)
     
     return(moves)
@@ -1002,8 +1003,8 @@ ai<<-function(){
   if(gameOver!=T) {
 
  det<-prioritize()
-  aix<-ceiling(det[1])
-  aiy<-ceiling(det[2])
+  aix<<-ceiling(det[1])
+  aiy<<-ceiling(det[2])
   move(aix,aiy) 
   } else {
   if(gameOver==T){
@@ -1111,6 +1112,8 @@ loss<<-function(n){
 }
 
 train<<-function(){
+  fullSetWE()
+  assembleBoard()
   move(3,3)
   move(1,2)
   move(3,1)
@@ -1121,26 +1124,26 @@ train<<-function(){
   move(3,2)
   move(3,3)
   
-}
-
-train2<-function(){
-  assembleBoard()
-  move(1,1)
+  move(2,2)
+  move(1,3)
+  move(3,1)
+  
+  move(2,2)
+  move(1,3)
+  move(3,1)
+  move(2,1)
+  move(2,3)
+  
   move(2,2)
   move(1,2)
-  move(1,3)
+  move(3,2)
   
-  move(2,2)
-  move(1,1)
-  move(3,3)
-  
-  move(2,2)
-  move(1,3)
-  move(3,3)
-  
-  
+  move()
 }
 
+
+
 #change formulat to linear?
+
 
 
