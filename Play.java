@@ -164,13 +164,90 @@ public class Play {
 
 	}
 
+	
+	public static int[] enPMoves() {
+
+		int[] enPosit = new int[0];
+		int inX = log[log.length-4];
+		int inY = log[log.length-3];
+		int finX = log[log.length-2];
+		int finY = log[log.length-1];
+		char Piece = board[finY][finX].charAt(0);
+		char side = board[finY][finX].charAt(1);
+		int enX = log[log.length-2];
+		int enY = log[log.length-1];
+		String rP;
+		if(Piece == 'P') {
+			if(side == 'W') {
+				if (finY-inY==2) {
+					rP = board[finY][finX-1];
+					System.out.println(rP);
+					if ((rP.charAt(0)=='P')&&(rP.charAt(1)=='B')) {
+						enlarge(enPosit,finX-1,finY);
+						enlarge(enPosit,finX,finY+1);
+					}
+					rP = board[finY][finX+1];
+					System.out.println(rP);
+					if ((rP.charAt(0)=='P')&&(rP.charAt(1)=='B')) {
+						enlarge(enPosit,finX+1,finY);
+						enlarge(enPosit, finX,finY+1);
+					}
+						
+					
+				}
+			} else if(side == 'B') {
+				
+			}
+				if (inY-finY==2) {
+					rP = board[finY][finX-1];
+					System.out.println(rP);
+					if ((rP.charAt(0)=='P')&&(rP.charAt(1)=='W')) {
+						enlarge(enPosit,finX-1,finY);
+						enlarge(enPosit,finX,finY-1);
+					}
+					rP = board[finY][finX+1];
+					System.out.println(rP);
+					if ((rP.charAt(0)=='P')&&(rP.charAt(1)=='W')) {
+						enlarge(enPosit,finX+1,finY);
+						enlarge(enPosit,finX,finY-1);
+					}
+				
+			}
+		}
+
+
+		return enPosit;
+	}
+	
+
+	
+	public static boolean checkEn(int x1, int y1, int x2, int y2) {
+		//xy1 vals represent init move
+		//xy2 vals represent enP move to be done
+		boolean en = false;
+		int[] valids = enPMoves();
+		//enP returns list of valid init positions to execute 
+		int i = valids.length;
+		
+		for (int n = 0; n<i; n=n+2) {
+		    if ((x1 == valids[n])&&(y1 == valids[n+1])&&(x2==valids[n+2])&&(y2==valids[n+3])) {
+		        return true;
+		    }
+		}
+		
+		return en;
+	}
+	
+	
+	
 	public static int[] showMoves(int x1, int y1) {
 		char Piece = board[y1][x1].charAt(0);
 		char side = board[y1][x1].charAt(1);
 		currPieceX = x1;
 		currPieceY = y1;
-		
+
 		checkMove = new int[0];
+		
 
 
 		// coding for W
@@ -195,6 +272,10 @@ public class Play {
 				if (board[y1 + 1][x1 - 1].charAt(1) == opp) {
 					addMove(x1 - 1, y1 + 1);
 				}
+
+//				if ((board[y1 + 1][x1 + 1] == "  ")&&(enX == x1+1)&&(enY == y1)) {
+//					
+//				}
 			} else {
 				if ((board[y1][0] == defBoard[7][0]) && (board[y1 - 1][x1] == "  ")) {
 					addMove(x1, y1 - 1);
@@ -441,10 +522,12 @@ public class Play {
 
 
 	
-
+	
 	
 	public static void move(int x1, int y1, int x2, int y2) {
 
+		
+		
 		if (check(x1, y1, x2, y2) == true) {
 			String temp;
 			 temp = board[y2][x2];
@@ -722,15 +805,22 @@ public class Play {
 	
 	public static void main(String[] args) {
 		resetBoard();
-		move(1,2,1,3);
-		changeTurn();
-		move(1,3,1,4);
+
+		move(4,2,4,4);
+		move(1,7,1,5);
+		move(4,4,4,5);
+		move(3,7,3,5);
+		
 		showBoard();
 		System.out.println(Arrays.toString(log));
+		System.out.println(Arrays.toString(enPMoves()));
+		
+
+				
 
 
 //		noteBoard();
-		startGame();
+//		startGame();
 
 
 
