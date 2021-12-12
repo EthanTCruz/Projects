@@ -18,6 +18,16 @@ public class Play {
 	static boolean[] castleW = new boolean[] {true, true};
 	static boolean[] castleB = new boolean[] {true,true};
 	
+	//castle coords in x,y format
+	int[] rwc = new int[] {7,1};
+	int[] lwc = new int[] {3,1};
+	int[] rbc = new int[] {7,8};
+	int[] lbc = new int[] {3,8};
+	
+	
+	
+	
+	
 	static int currPieceX;
 	static int currPieceY;
 	
@@ -272,10 +282,72 @@ public class Play {
 		return accomp;
 	}
 
-	public static void checkCastle () {
+	public static boolean[] checkCastle () {
 		
-		
-		
+
+//have this function retrun own int[] to not mess with castle array
+		boolean[] castTemp = new boolean[] {true,true};
+		//Array format {left,right}
+		if ((curr == 'W')&&(castleW[0]==true)&&(castleW[1]==true) || (curr == 'B')&&(castleB[0]==true)&&(castleB[1]==true)) {
+			
+			if (curr == 'W') {
+				int y = 1;
+			} else {
+				int y = 8;
+			}
+			
+			int[] all = allPosMoves(opp);
+			int i = all.length;
+
+			for (int v = 0; v < i; v = v + 2) {
+				if ((all[v] == 5) && (all[v + 1] == 1)) {
+					
+					castTemp[1] = false;
+					castTemp[0] = false;
+					
+				}
+					//right side castle eval
+					if ((all[v] != 6) && (all[v + 1] != 1)&&(board[1][6]=="  ")) {
+						castTemp[1] = false;
+					}
+						if ((all[v] != 7) && (all[v + 1] != 1)&&(board[1][6]=="  ")) {
+							castTemp[1] = false;
+						}
+							if ((all[v] != 8) && (all[v + 1] != 1)&&(board[1][6]=="  ")) {
+								castTemp[1] = false;
+							}
+								
+								
+						
+									
+					if ((all[v] == 4) && (all[v + 1] == 1)&&(board[1][6]=="  ")) {
+						castTemp[0] = false;
+					}
+						if ((all[v] == 3) && (all[v + 1] == 1)&&(board[1][6]=="  ")) {
+							castTemp[0] = false;
+						}
+							if ((all[v] == 2) && (all[v + 1] == 1)&&(board[1][6]=="  ")) {
+								castTemp[0] = false;
+							}
+								if ((all[v] == 1) && (all[v + 1] == 1)&&(board[1][6]=="  ")) {
+									castTemp[0] = false;
+								}
+							
+								
+								
+						
+					
+			
+					
+				
+				
+			}
+
+			
+		} 
+		//add reversion to normal and store updated in temp for return
+
+		return castTemp;
 	}
 	
 	public static int[] showMoves(int x1, int y1) {
@@ -581,12 +653,18 @@ public class Play {
 					castleW[1] = false;
 				} else if((x1 == 1)&&(y1==1)) {
 					castleW[0] = false;
+				} else if((x1 == 5)&&(y1 == 1)) {
+					castleW[0] = false;
+					castleW[1] = false;
 				}
 			} else {
 				if((x1 == 8)&&(y1==8)) {
 					castleB[1] = false;
 				} else if((x1 == 1)&&(y1==8)) {
 					castleB[0] = false;
+				} else if((x1 == 5)&&(y1 == 8)) {
+					castleB[0] = false;
+					castleB[1] = false;
 				}
 			}
 			changeTurn();
@@ -604,6 +682,7 @@ public class Play {
 				moveLog(x1, y1);
 				moveLog(x2, y2);
 //				changeTurn();
+			}
 				if(kingFind(curr)[0] == 0) {
 					System.out.print(opp + " wins!!!");
 				}
@@ -611,7 +690,7 @@ public class Play {
 			valid = false;
 			System.out.println("invalid move: " + x1+y1+x2+y2 );
 		}
-		}
+		
 		noteBoard();
 
 	}
@@ -881,7 +960,11 @@ public class Play {
 		move(8,7,8,5);
 		
 		showBoard();
-		System.out.println(Arrays.toString(log));
+
+		checkCastle();
+		
+		System.out.println(Arrays.toString(castleW));
+		System.out.println(Arrays.toString(castleB));
 		System.out.println(Arrays.toString(enPMoves()));
 //		System.out.println(checkEn(2,5,3,6));
 		showBoard();
