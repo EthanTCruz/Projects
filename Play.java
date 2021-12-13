@@ -21,6 +21,10 @@ public class Play {
 	//castle coords in x,y format
 
 	
+	//Defualt promotions
+	static String prefPW = "QW";
+	static String prefPB = "QB";
+	
 	
 	
 	
@@ -714,6 +718,27 @@ public class Play {
 	}
 	
 	
+	public static boolean promote(int x, int y) {
+		boolean promoted = false;
+		if (curr=='W') {
+			if(y == 8) {
+				if(board[x][y] == "PW") {
+					board[x][y] = prefPW;
+					promoted = true;
+				}
+			}
+		} else {
+			if(y == 1) {
+				if(board[y][x] == "PB") {
+					board[y][x] = prefPB;
+					promoted = true;
+				}
+			}
+		}
+		
+		return promoted;
+	}
+	
 	public static void move(int x1, int y1, int x2, int y2) {
 
 		
@@ -728,7 +753,9 @@ public class Play {
 		if(kingCheck()==false) {
 			moveLog(x1, y1);
 			moveLog(x2, y2);
+			promote(x2,y2);
 			if (curr=='W') {
+
 				if((x1 == 8)&&(y1==1)) {
 					castleW[1] = false;
 				} else if((x1 == 1)&&(y1==1)) {
