@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>chessBoard start</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<link href="css/custom.css" rel="stylesheet" />
+<style type="text/css">
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div class="container">
+    <h1 class="col-lg-9" align="center">chessBoard start</h1>
+    
+    </div>
+  </header>
+  <div class="container">
+
+<table class="table" id="myTable" align="center" border ="1">
+  <tr>
+    <td name="a1">Coke 1L</td>
+    <td name = "a2">35.75</td>
+    <td bgcolor="black">4806505141351</td>
+    <td>Beverages</td>
+    <td>Extra1</td>
+    <td>Extra2</td>
+  </tr>
+  <tr>
+    <td>Coke 1L</td>
+    <td>35.75</td>
+    <td>4806505141351</td>
+    <td>Beverages</td>
+    <td>Extra1</td>
+    <td>Extra2</td>
+  </tr>
+  <tr>
+    <td>Coke 1L</td>
+    <td>35.75</td>
+    <td>4806505141351</td>
+    <td>Beverages</td>
+    <td>Extra1</td>
+    <td>Extra2</td>
+  </tr>
+</table>
+</div>
+</div>
+
+ 
+<script src="http://code.jquery.com/jquery.js"></script>
+ 
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script>
+$(function() {
+  $('#myTable td').click(function() {
+    alert($(this).attr("name"));
+
+  });
+});
+</script>
+</body>
+</html>
